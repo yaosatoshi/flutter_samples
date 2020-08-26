@@ -1,79 +1,41 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(MyApp());
-}
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+    return const MaterialApp(
+      home: _HomePage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-  final String title;
+class _HomePage extends StatelessWidget {
+  const _HomePage({Key key}) : super(key: key);
 
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-
-  static _MyHomePageState of(BuildContext context, { bool nullOk = false }) {
-    final _MyHomePageState result = context.findAncestorStateOfType<_MyHomePageState>();
-    if (nullOk || result != null)
-      return result;
-  }
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+  final String message = "HomePage";
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many timesz:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: new MyFloatingActionButton()
-    );
+    return _Message();
+  }
+
+  static _HomePage of(BuildContext context) {
+    return context.findAncestorWidgetOfExactType<_HomePage>();
   }
 }
 
-class MyFloatingActionButton extends StatelessWidget {
+class _Message extends StatelessWidget {
+  const _Message({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: MyHomePage.of(context)._incrementCounter,
-      tooltip: 'Increment',
-      child: Icon(Icons.add),
-
+    return Text(
+      'Message: ${_HomePage.of(context).message}',
+      style: const TextStyle(fontSize: 96),
     );
   }
 }
