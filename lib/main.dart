@@ -9,36 +9,81 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: _Inherited(
-        child: _Message(),
+    return  MaterialApp(
+      home: Scaffold(
+        body: HomePage(),
       ),
     );
   }
 }
 
-class _Inherited extends InheritedWidget {
-  _Inherited({
-    Key key,
-    @required Widget child,
-  }) : super(key: key, child: child);
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
 
-  final String message = 'InheritedMessage';
+class _HomePageState extends State<HomePage> {
+  int _counter = 0;
 
-  static _Inherited of(BuildContext context) {
-    return context.getElementForInheritedWidgetOfExactType<_Inherited>().widget
-        as _Inherited;
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
   }
 
   @override
-  bool updateShouldNotify(_Inherited old) => false;
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            WidgetA_CounterText(_counter),
+            WidgetB_FixedText(),
+            WidgetC_Button(_incrementCounter),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-class _Message extends StatelessWidget {
-  _Message({Key key}) : super(key: key);
+class WidgetA_CounterText extends StatelessWidget {
+  final int counter;
+
+  WidgetA_CounterText(this.counter);
 
   @override
   Widget build(BuildContext context) {
-    return Text('${_Inherited.of(context).message}');
+    print('$this build() called.');
+    return  Text(
+        '${counter}',
+        style: Theme.of(context).textTheme.display1,
+    );
+  }
+}
+
+class WidgetB_FixedText extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    print('$this build() called.');
+    return Text('FIXED TEXT');
+  }
+}
+
+class WidgetC_Button extends StatelessWidget {
+  final void Function() incrementCounter;
+
+  WidgetC_Button(this.incrementCounter);
+
+  @override
+  Widget build(BuildContext context) {
+    print('$this build() called.');
+    return RaisedButton(
+      onPressed: () {
+        incrementCounter();
+      },
+      child: Text('Update Counter'),
+    );
   }
 }
