@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             WidgetA_CounterText(_counter),
-            WidgetB_FixedText(),
+            const WidgetB_FixedText(),
             WidgetC_Button(_incrementCounter),
           ],
         ),
@@ -64,6 +64,7 @@ class WidgetA_CounterText extends StatelessWidget {
 }
 
 class WidgetB_FixedText extends StatelessWidget {
+  const WidgetB_FixedText({Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     print('$this build() called.');
