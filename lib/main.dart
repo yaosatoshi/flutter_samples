@@ -10,18 +10,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        body: HomePage(
-          child: Scaffold(
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  WidgetA_CounterText(),
-                  WidgetB_FixedText(),
-                  WidgetC_Button(),
-                ],
-              ),
+      home: HomePage(
+        child: Scaffold(
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                WidgetA_CounterText(),
+                WidgetB_FixedText(),
+                WidgetC_Button(),
+              ],
             ),
           ),
         ),
