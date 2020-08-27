@@ -77,6 +77,7 @@ class _Inherited extends InheritedWidget {
 
   @override
   bool updateShouldNotify(_Inherited old) {
+    print('$this updateShouldNotify called. return true.');
     return true;
   }
 }
@@ -105,9 +106,9 @@ class WidgetC_Button extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('$this build() called.');
-    final _HomePageState state = HomePage.of(context, false);
     return RaisedButton(
       onPressed: () {
+        final _HomePageState state = HomePage.of(context, false);
         state._incrementCounter();
       },
       child: Text('Update Counter'),
