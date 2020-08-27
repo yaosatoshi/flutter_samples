@@ -9,17 +9,48 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
+    return MaterialApp(
       home: Scaffold(
-        body: HomePage(),
+        body: HomePage(
+          child: Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  WidgetA_CounterText(),
+                  WidgetB_FixedText(),
+                  WidgetC_Button(),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
 }
 
 class HomePage extends StatefulWidget {
+  HomePage({
+    Key key,
+    this.child,
+  }) : super(key: key);
+
+  final Widget child;
+
   @override
   _HomePageState createState() => _HomePageState();
+
+  static _HomePageState of(BuildContext context, bool rebuild) {
+    if (rebuild) {
+      return context.dependOnInheritedWidgetOfExactType<_Inherited>().data;
+    } else {
+      return (context
+              .getElementForInheritedWidgetOfExactType<_Inherited>()
+              .widget as _Inherited)
+          .data;
+    }
+  }
 }
 
 class _HomePageState extends State<HomePage> {
@@ -33,32 +64,33 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            WidgetA_CounterText(_counter),
-            WidgetB_FixedText(),
-            WidgetC_Button(_incrementCounter),
-          ],
-        ),
-      ),
-    );
+    return _Inherited(data: this, child: widget.child);
+  }
+}
+
+class _Inherited extends InheritedWidget {
+  _Inherited({
+    Key key,
+    @required Widget child,
+    @required this.data,
+  }) : super(key: key, child: child);
+
+  final _HomePageState data;
+
+  @override
+  bool updateShouldNotify(_Inherited old) {
+    return true;
   }
 }
 
 class WidgetA_CounterText extends StatelessWidget {
-  final int counter;
-
-  WidgetA_CounterText(this.counter);
-
   @override
   Widget build(BuildContext context) {
     print('$this build() called.');
-    return  Text(
-        '${counter}',
-        style: Theme.of(context).textTheme.display1,
+    final _HomePageState state = HomePage.of(context, true);
+    return Text(
+      '${state._counter}',
+      style: Theme.of(context).textTheme.display1,
     );
   }
 }
@@ -72,16 +104,13 @@ class WidgetB_FixedText extends StatelessWidget {
 }
 
 class WidgetC_Button extends StatelessWidget {
-  final void Function() incrementCounter;
-
-  WidgetC_Button(this.incrementCounter);
-
   @override
   Widget build(BuildContext context) {
     print('$this build() called.');
+    final _HomePageState state = HomePage.of(context, false);
     return RaisedButton(
       onPressed: () {
-        incrementCounter();
+        state._incrementCounter();
       },
       child: Text('Update Counter'),
     );
