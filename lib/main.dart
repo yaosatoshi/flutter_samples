@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(MyApp());
@@ -10,7 +11,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomePage(
+      home: ChangeNotifierProvider(
+        create: (context) => _Notifier(),
         child: Scaffold(
           body: Center(
             child: Column(
@@ -28,67 +30,20 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatefulWidget {
-  HomePage({
-    Key key,
-    this.child,
-  }) : super(key: key);
+class _Notifier extends ValueNotifier<int> {
+  _Notifier() : super(0);
 
-  final Widget child;
+  void increment() => value++;
 
-  @override
-  _HomePageState createState() => _HomePageState();
-
-  static _HomePageState of(BuildContext context, bool rebuild) {
-    if (rebuild) {
-      return context.dependOnInheritedWidgetOfExactType<_Inherited>().data;
-    } else {
-      return (context
-              .getElementForInheritedWidgetOfExactType<_Inherited>()
-              .widget as _Inherited)
-          .data;
-    }
-  }
-}
-
-class _HomePageState extends State<HomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _Inherited(data: this, child: widget.child);
-  }
-}
-
-class _Inherited extends InheritedWidget {
-  _Inherited({
-    Key key,
-    @required Widget child,
-    @required this.data,
-  }) : super(key: key, child: child);
-
-  final _HomePageState data;
-
-  @override
-  bool updateShouldNotify(_Inherited old) {
-    print('$this updateShouldNotify called. return true.');
-    return true;
-  }
+  String get _counter => value.toString();
 }
 
 class WidgetA_CounterText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('$this build() called.');
-    final _HomePageState state = HomePage.of(context, true);
     return Text(
-      '${state._counter}',
+      '${Provider.of<_Notifier>(context)._counter}',
       style: Theme.of(context).textTheme.display1,
     );
   }
@@ -108,8 +63,7 @@ class WidgetC_Button extends StatelessWidget {
     print('$this build() called.');
     return RaisedButton(
       onPressed: () {
-        final _HomePageState state = HomePage.of(context, false);
-        state._incrementCounter();
+        Provider.of<_Notifier>(context, listen: false).increment();
       },
       child: Text('Update Counter'),
     );
