@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart';
 
 void main() => runApp(MyApp());
 
@@ -15,19 +16,18 @@ class MyApp extends StatelessWidget {
   }
 }
 
+Future<String> getAsyncString(String fromMessage) async {
+  var st = DateTime.now().millisecondsSinceEpoch;
+  await Future.delayed(new Duration(seconds: 2));
+  return "getAsyncString() called. ${fromMessage} times. /delay:${DateTime.now().millisecondsSinceEpoch - st}ms";
+}
+
 class _Notifier extends ValueNotifier<String> {
   _Notifier() : super("");
 
   int _counter = 0;
-
   void action() async {
-    value = await getAsyncString();
-  }
-
-  Future<String> getAsyncString() async {
-    var st = DateTime.now().millisecondsSinceEpoch;
-    await Future.delayed(new Duration(seconds: 2));
-    return "getAsyncString() called. ${++_counter} times. /delay:${DateTime.now().millisecondsSinceEpoch - st}ms";
+    value = await compute(getAsyncString, (++_counter).toString());
   }
 }
 
