@@ -1,7 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
 
 void main() => runApp(MyApp());
 
@@ -9,43 +10,62 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: ChangeNotifierProvider(
-          create: (context) => _Notifier(), child: MyHomePage()),
-    );
+        theme: ThemeData(primarySwatch: Colors.blue),
+        home: ChangeNotifierProvider(
+            create: (context) => _Notifier(), child: MyHomePage()));
   }
 }
 
 class _Notifier extends ValueNotifier<String> {
   _Notifier() : super("");
 
-  List<String> listdata = [];
-  List<String> getData() => listdata;
-
-  void httpGet() {
-    const url = 'https://jsonplaceholder.typicode.com/posts';
-    print("httpGet called. /url:$url");
-    http.get(url).then((response) {
-      print("Response status: ${response.statusCode}");
-      print("Response body: ${response.body}");
-      listdata = response.body.split("\n");
-      value = response.body;
-    });
+  void encode() {
+    var data = {
+      {'score': 40},
+      [
+        {'a': 40},
+        {'b': 80},
+        {'c': 100, 'overtime': true, 'special_guest': null}
+      ]
+    };
+    value = jsonEncode(data);
   }
 
-  void httpPut() {
-    const url = 'https://httpbin.org/put';
-    print("httpPut called. /url:$url");
-    Map<String, String> headers = {'content-type': 'application/json'};
-    String body = '{"name":"FlutterSample"}';
-    http.put(url, headers: headers, body: body).then((response) {
-      print("Response status: ${response.statusCode}");
-      print("Response body: ${response.body}");
-      listdata = response.body.split("\n");
-      value = response.body;
+  void decode() {
+    var jsonString = ''' [{"score":40},{"score":80}] ''';
+    var output = "";
+
+    List<dynamic> scores = jsonDecode(jsonString);
+    var i = 0;
+    scores.forEach((element) {
+      output += "#${++i} : ${element['score']}\n";
     });
+    value = output;
   }
 }
+
+class _MyDataSub {
+  String stringDat;
+  _MyDataSub(String sd) {
+    stringDat = sd;
+  }
+  static
+}
+
+class _MyData {
+  int intDat;
+  String stringDat;
+  List<int> intarrayDat;
+  List<_MyDataSub> objectarrayDat;
+
+  _MyData(int id, String sd, List<int> iad, List<_MyDataSub> oad) {
+    intDat = id;
+    stringDat = sd;
+    intarrayDat = iad;
+    objectarrayDat = oad;
+  }
+}
+
 
 class MyHomePage extends StatelessWidget {
   MyHomePage({Key key}) : super(key: key);
@@ -56,7 +76,7 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Flutter HTTP in Dart sample.")),
+      appBar: AppBar(title: Text("Flutter JSON sample.")),
       body: Column(
         children: [
           Row(
@@ -67,8 +87,8 @@ class MyHomePage extends StatelessWidget {
                   padding: EdgeInsets.all(8.0),
                   child: RaisedButton(
                     onPressed: () =>
-                        MyHomePage.of(context, listen: false).httpGet(),
-                    child: Text('Get'),
+                        MyHomePage.of(context, listen: false).encode(),
+                    child: Text('Encode'),
                   ),
                 ),
               ),
@@ -77,26 +97,17 @@ class MyHomePage extends StatelessWidget {
                   padding: EdgeInsets.all(8.0),
                   child: RaisedButton(
                     onPressed: () =>
-                        MyHomePage.of(context, listen: false).httpPut(),
-                    child: Text('Put'),
+                        MyHomePage.of(context, listen: false).decode(),
+                    child: Text('Decode'),
                   ),
                 ),
               ),
             ],
           ),
           Expanded(
-            child: ListView.builder(
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemCount: MyHomePage.of(context, listen: true).getData().length,
-              itemBuilder: (context, int index) {
-                return Padding(
-                  padding: EdgeInsets.all(4.0),
-                  child: Text(
-                      MyHomePage.of(context, listen: false).getData()[index]),
-                );
-              },
-            ),
+            child: Text(MyHomePage
+                .of(context, listen: true)
+                .value),
           ),
         ],
       ),
