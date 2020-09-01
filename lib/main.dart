@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,20 @@ class MyApp extends StatelessWidget {
   }
 }
 
+void _getAsyncStringIsolate(SendPort replyTo) {
+  final receivePort = ReceivePort();
+  replyTo.send(receivePort.sendPort);
+  receivePort.listen((message) {
+    final data = message[0] as String;
+    final send = message[1] as SendPort;
+  });
+
+  var st = DateTime.now().millisecondsSinceEpoch;
+  sleep(Duration(milliseconds: 500));
+  return "getAsyncString() called. ${++_counter} times. /delay:${DateTime.now().millisecondsSinceEpoch - st}ms";
+
+}
+
 class _Notifier extends ValueNotifier<String> {
   _Notifier() : super("");
 
@@ -27,9 +42,18 @@ class _Notifier extends ValueNotifier<String> {
   }
 
   Future<String> getAsyncString() async {
-    var st = DateTime.now().millisecondsSinceEpoch;
-    sleep(Duration(seconds: 2));
-    return "getAsyncString() called. ${++_counter} times. /delay:${DateTime.now().millisecondsSinceEpoch - st}ms";
+    final receivePort = ReceivePort();
+    await Isolate.spawn(_getAsyncStringIsolate, receivePort.sendPort);
+
+    final sendPort = await receivePort.first as SendPort;
+    final answer = ReceivePort();
+    sendPort.send([(++_counter).toString(), answer.sendPort]);
+
+    receivePort.listen((message) {
+
+    });
+    final users = await answer.first as List<User>;
+    return users;
   }
 }
 
@@ -42,7 +66,7 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Flutter Future sample.")),
+      appBar: AppBar(title: Text("Flutter Isolate sample.")),
       body: Column(
         children: [
           Row(
