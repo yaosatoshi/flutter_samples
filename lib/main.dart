@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +20,7 @@ class MyApp extends StatelessWidget {
 
 Future<String> getAsyncString(String fromMessage) async {
   var st = DateTime.now().millisecondsSinceEpoch;
-  await Future.delayed(new Duration(seconds: 2));
+  sleep(Duration(seconds: 2));
   return "getAsyncString() called. ${fromMessage} times. /delay:${DateTime.now().millisecondsSinceEpoch - st}ms";
 }
 
@@ -40,7 +42,7 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Flutter Future sample.")),
+      appBar: AppBar(title: Text("Flutter Compute sample.")),
       body: Column(
         children: [
           Row(
