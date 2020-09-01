@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +28,7 @@ class _Notifier extends ValueNotifier<String> {
 
   Future<String> getAsyncString() async {
     var st = DateTime.now().millisecondsSinceEpoch;
-    await Future.delayed(new Duration(seconds: 2));
+    sleep(Duration(seconds: 2));
     return "getAsyncString() called. ${++_counter} times. /delay:${DateTime.now().millisecondsSinceEpoch - st}ms";
   }
 }
