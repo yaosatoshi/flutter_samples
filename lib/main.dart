@@ -71,7 +71,7 @@ class _MyData {
 
   String log() {
     String my2ListLog = "[";
-    my2ListDat.map((item) => my2ListLog += "${item.log()},");
+    my2ListDat.forEach((item) => my2ListLog += "${item.log()},");
     my2ListLog += "]";
     return "_MyData(/intDat:$intDat /stringDat:$stringDat /intListDat:$intListDat /stringListDat:$stringListDat /my1Dat:${my1Dat.log()} /my2ListDat:$my2ListLog)";
   }
@@ -116,7 +116,8 @@ class _Notifier extends ValueNotifier<String> {
       ]);
 
   //String get sampleJsonString => sampleData.toJsonString();
-  String get sampleJsonString => '{"intDat":500,"stringDat":"STRING","intListDat":[0,1,2,3,4],"stringListDat":["A","B","C"],"my1Dat":{"my1stringDat":"Sub1","my1boolDat":true},"my2ListDat":[{"my2doubleDat":0.7,"my2bintDat":"4000"},{"my2doubleDat":1.4,"my2bintDat":"8000"},{"my2doubleDat":2.1,"my2bintDat":"12000"}]}';
+  String get sampleJsonString =>
+      '{"intDat":500,"stringDat":"STRING","intListDat":[0,1,2,3,4],"stringListDat":["A","B","C"],"my1Dat":{"my1stringDat":"Sub1","my1boolDat":true},"my2ListDat":[{"my2doubleDat":0.7,"my2bintDat":"4000"},{"my2doubleDat":1.4,"my2bintDat":"8000"},{"my2doubleDat":2.1,"my2bintDat":"12000"}]}';
 
   _Notifier() : super("");
 
