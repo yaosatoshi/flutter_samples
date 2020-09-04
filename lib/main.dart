@@ -8,10 +8,12 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final notifier = _Notifier();
+    notifier.init();
     return MaterialApp(
         theme: ThemeData(primarySwatch: Colors.blue),
         home: ChangeNotifierProvider(
-            create: (context) => _Notifier(), child: MyHomePage()));
+            create: (context) => notifier, child: MyHomePage()));
   }
 }
 
@@ -30,6 +32,9 @@ class _Notifier extends ValueNotifier<String> {
 
   void save() => storage.save(storedString);
 
+  @override
+  Future init() async => storage.init();
+
   Future<String> load() async {
     textEditingController.text = storedString = await storage.load();
     value = storedString;
@@ -45,7 +50,7 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Flutter Shared Preference sample.")),
+      appBar: AppBar(title: Text("Flutter Database(SQLite) sample.")),
       body: Column(
         children: [
           Row(
