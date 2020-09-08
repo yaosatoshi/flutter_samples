@@ -13,10 +13,49 @@ class MainActivity : FlutterActivity() {
 
     private val CHANNEL: String = "com.example.flutter_application/flutter_to_native_sample";
 
+    private lateinit var channel: MethodChannel
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "onPause called.")
+        channel.invokeMethod("onActivityChangedFromNative", "onPause", object : MethodChannel.Result {
+            override fun success(result: Any?) {
+                val resultStr = result as String
+                Log.d(TAG, "onActivityChangedFromNative(onPause) success. /result:$resultStr")
+            }
+
+            override fun error(errorCode: String?, errorMessage: String?, errorDetails: Any?) {
+                Log.d(TAG, "onActivityChangedFromNative(onPause) error. /errorCode:$errorCode, /errorMessage:$errorMessage, /errorDetails:$errorDetails")
+            }
+
+            override fun notImplemented() {
+                Log.d(TAG, "onActivityChangedFromNative(onPause) notImplemented")
+            }
+        })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "onResume called.")
+        channel.invokeMethod("onActivityChangedFromNative", "onResume", object : MethodChannel.Result {
+            override fun success(result: Any?) {
+                Log.d(TAG, "onActivityChangedFromNative(onResume) success. /result:$result")
+            }
+
+            override fun error(errorCode: String?, errorMessage: String?, errorDetails: Any?) {
+                Log.d(TAG, "onActivityChangedFromNative(onResume) error. /errorCode:$errorCode, /errorMessage:$errorMessage, /errorDetails:$errorDetails")
+            }
+
+            override fun notImplemented() {
+                Log.d(TAG, "onActivityChangedFromNative(onResume) notImplemented")
+            }
+        })
+    }
+
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         GeneratedPluginRegistrant.registerWith(flutterEngine)
 
-        val channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
+        channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
         channel.setMethodCallHandler { methodCall: MethodCall, result: MethodChannel.Result ->
             when (methodCall.method) {
                 "voidMethodNoParam" -> {

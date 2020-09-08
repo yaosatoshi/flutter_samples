@@ -1,8 +1,10 @@
 import 'package:flutter/services.dart';
 
 class ToNativeAPI {
-  final _channel = const MethodChannel(
-      "com.example.flutter_application/flutter_to_native_sample");
+
+  final MethodChannel _channel;
+
+  ToNativeAPI(this._channel);
 
   Future<void> voidMethodNoParam() async {
     await _channel.invokeMethod<void>('voidMethodNoParam');

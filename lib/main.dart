@@ -1,27 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application/FromNativeAPI.dart';
 import 'package:flutter_application/ToNativeAPI.dart';
 import 'package:provider/provider.dart';
 
 import 'ToNativeAPI.dart';
+import 'package:flutter/services.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final _notifier = _Notifier();
+    _notifier.init();
     return MaterialApp(
         theme: ThemeData(primarySwatch: Colors.blue),
         home: ChangeNotifierProvider(
-            create: (context) => _Notifier(), child: MyHomePage()));
+            create: (context) => _notifier, child: MyHomePage()));
   }
 }
 
 class _Notifier extends ValueNotifier<String> {
   static const String InitialValue = "(Please push the button.)";
 
-  final ToNativeAPI toNative = ToNativeAPI();
+  final _channel = const MethodChannel(
+      "com.example.flutter_application/flutter_to_native_sample");
+
+  ToNativeAPI toNative;
+  FromNativeAPI fromNative;
 
   _Notifier() : super(InitialValue);
+
+  void init() {
+    print("_Notifier init() called.");
+    toNative = ToNativeAPI(_channel);
+    fromNative = FromNativeAPI(_channel);
+    fromNative.init();
+  }
 
   void voidMethodNoParam() async {
     await toNative.voidMethodNoParam();
