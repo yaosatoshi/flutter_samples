@@ -20,6 +20,7 @@ class MainActivity : FlutterActivity() {
         channel.setMethodCallHandler { methodCall: MethodCall, result: MethodChannel.Result ->
             when (methodCall.method) {
                 "voidMethodNoParam" -> {
+                    result.success(null)
                     Log.i(TAG, "voidMethodNoParam() finished.")
                 }
                 "getIntMethodNoParam" -> {
