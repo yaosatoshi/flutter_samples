@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application/ToNativeAPI.dart';
 import 'package:provider/provider.dart';
 
-import 'Storage.dart';
+import 'ToNativeAPI.dart';
 
 void main() => runApp(MyApp());
 
@@ -16,77 +17,102 @@ class MyApp extends StatelessWidget {
 }
 
 class _Notifier extends ValueNotifier<String> {
-  static const String InitialValue = "(Not yet...)";
+  static const String InitialValue = "(Please push the button.)";
+
+  final ToNativeAPI toNative = ToNativeAPI();
 
   _Notifier() : super(InitialValue);
-  var _storedString = InitialValue;
 
-  set storedString(String val) => _storedString = val;
+  void voidMethodNoParam() async {
+    await toNative.voidMethodNoParam();
+    value = "voidMethodNoParam() finished.";
+  }
 
-  String get storedString => _storedString;
+  void getIntMethodNoParam() async {
+    final ret = await toNative.getIntMethodNoParam();
+    value = "getIntMethodNoParam() finished. /ret:$ret";
+  }
 
-  final MyStorage storage = MyStorage();
-  final textEditingController = TextEditingController(text: InitialValue);
+  void getStringMethodParamsInt() async {
+    final ret = await toNative.getStringMethodParamsInt(999);
+    value = "getStringMethodParamsInt() finished. /ret:$ret";
+  }
 
-  void save() => storage.save(storedString);
+  void getIntArrayMethodParamsStringInt() async {
+    final List<int> ret =
+        await toNative.getIntArrayMethodParamsStringInt('ABC', 999);
+    value = "getIntArrayMethodParamsStringInt() finished. /ret:$ret";
+  }
 
-  Future<String> load() async {
-    textEditingController.text = storedString = await storage.load();
-    value = storedString;
+  void getMapMethodNoParams() async {
+    final Map<String, dynamic> ret = await toNative.getMapMethodNoParams();
+    value = "getMapMethodNoParams() finished. /ret:$ret";
   }
 }
 
 class MyHomePage extends StatelessWidget {
-  MyHomePage({Key key}) : super(key: key);
-
   static _Notifier of(BuildContext context, {bool listen = true}) =>
       Provider.of<_Notifier>(context, listen: listen);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Flutter Shared Preference sample.")),
-      body: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: RaisedButton(
-                    onPressed: () =>
-                        MyHomePage.of(context, listen: false).save(),
-                    child: Text('Save'),
+      appBar: AppBar(title: Text("Flutter Platform channel sample.")),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("${MyHomePage.of(context).value}"),
+            Padding(padding: const EdgeInsets.all(8.0)),
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    child: RaisedButton(
+                      onPressed: () => MyHomePage.of(context, listen: false)
+                          .voidMethodNoParam(),
+                      child: Text('voidMethodNoParam'),
+                    ),
                   ),
-                ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: RaisedButton(
-                    onPressed: () =>
-                        MyHomePage.of(context, listen: false).load(),
-                    child: Text('Load'),
+                  Container(
+                    width: double.infinity,
+                    child: RaisedButton(
+                      onPressed: () => MyHomePage.of(context, listen: false)
+                          .getIntMethodNoParam(),
+                      child: Text('getIntMethodNoParam'),
+                    ),
                   ),
-                ),
+                  Container(
+                    width: double.infinity,
+                    child: RaisedButton(
+                      onPressed: () => MyHomePage.of(context, listen: false)
+                          .getStringMethodParamsInt(),
+                      child: Text('getStringMethodParamsInt'),
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    child: RaisedButton(
+                      onPressed: () => MyHomePage.of(context, listen: false)
+                          .getIntArrayMethodParamsStringInt(),
+                      child: Text('getIntArrayMethodParamsStringInt'),
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    child: RaisedButton(
+                      onPressed: () => MyHomePage.of(context, listen: false)
+                          .getMapMethodNoParams(),
+                      child: Text('getMapMethodNoParams'),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(32.0),
-            child: TextFormField(
-              controller: MyHomePage.of(context).textEditingController,
-              decoration: InputDecoration(
-                  border: const UnderlineInputBorder(),
-                  hintText: 'Please enter the text.'),
-              onChanged: (changedText) {
-                MyHomePage.of(context, listen: false).storedString =
-                    changedText;
-              },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
