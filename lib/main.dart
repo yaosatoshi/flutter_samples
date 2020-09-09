@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application/httpAccess.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
 
 void main() => runApp(MyApp());
 
@@ -19,31 +18,21 @@ class MyApp extends StatelessWidget {
 class _Notifier extends ValueNotifier<String> {
   _Notifier() : super("");
 
+  final HttpAccess http = HttpAccess();
   List<String> listdata = [];
+
   List<String> getData() => listdata;
 
-  void httpGet() {
-    const url = 'https://jsonplaceholder.typicode.com/posts';
-    print("httpGet called. /url:$url");
-    http.get(url).then((response) {
-      print("Response status: ${response.statusCode}");
-      print("Response body: ${response.body}");
-      listdata = response.body.split("\n");
-      value = response.body;
-    });
+  void httpGet() async {
+    final body = await http.get();
+    listdata = body.split("\n");
+    value = body;
   }
 
-  void httpPut() {
-    const url = 'https://httpbin.org/put';
-    print("httpPut called. /url:$url");
-    Map<String, String> headers = {'content-type': 'application/json'};
-    String body = '{"name":"FlutterSample"}';
-    http.put(url, headers: headers, body: body).then((response) {
-      print("Response status: ${response.statusCode}");
-      print("Response body: ${response.body}");
-      listdata = response.body.split("\n");
-      value = response.body;
-    });
+  void httpPut() async {
+    final body = await http.put();
+    listdata = body.split("\n");
+    value = body;
   }
 }
 
