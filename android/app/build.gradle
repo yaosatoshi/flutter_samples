@@ -27,6 +27,10 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 apply plugin: 'io.fabric'
 apply plugin: 'com.google.gms.google-services'
 
+def keystorePropertiesFile = rootProject.file("key.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
     compileSdkVersion 28
 
@@ -47,11 +51,19 @@ android {
         versionName flutterVersionName
     }
 
-    buildTypes {
+    signingConfigs {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
+    buildTypes {
+       release {
+            applicationIdSuffix '.release'
+            signingConfig signingConfigs.release
         }
     }
 }
