@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:provider/provider.dart';
 
-void main() {
-  runApp(MyApp());
+void main() => runApp(MyApp());
+
+class _Notifier extends ValueNotifier<String> {
+  _Notifier() : super('');
+
+  Future<void> init() async {
+    value = await rootBundle.loadString('assets/txt/sampletext.txt');
+  }
+
+  AssetImage loadAssetImage() => AssetImage('assets/img/ic_launcher.png');
 }
 
 class MyApp extends StatelessWidget {
@@ -10,62 +19,32 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final notifier = _Notifier();
+    notifier.init();
     return MaterialApp(
       home: ChangeNotifierProvider(
-        create: (context) => _Notifier(),
-        child: Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                WidgetA_CounterText(),
-                WidgetB_FixedText(),
-                WidgetC_Button(),
-              ],
-            ),
-          ),
-        ),
+        create: (context) => notifier,
+        child: _MyHomePage(),
       ),
     );
   }
 }
 
-class _Notifier extends ValueNotifier<int> {
-  _Notifier() : super(0);
-
-  void increment() => value++;
-
-  String get _counter => value.toString();
-}
-
-class WidgetA_CounterText extends StatelessWidget {
+class _MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print('$this build() called.');
-    return Text(
-      '${Provider.of<_Notifier>(context)._counter}',
-      style: Theme.of(context).textTheme.display1,
-    );
-  }
-}
-
-class WidgetB_FixedText extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    print('$this build() called.');
-    return Text('FIXED TEXT');
-  }
-}
-
-class WidgetC_Button extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    print('$this build() called.');
-    return RaisedButton(
-      onPressed: () {
-        Provider.of<_Notifier>(context, listen: false).increment();
-      },
-      child: Text('Update Counter'),
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(Provider.of<_Notifier>(context).value),
+            Image(
+                image: Provider.of<_Notifier>(context, listen: false)
+                    .loadAssetImage()),
+          ],
+        ),
+      ),
     );
   }
 }
