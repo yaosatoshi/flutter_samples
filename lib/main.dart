@@ -1,31 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:provider/provider.dart';
+
+import 'dart:async';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'l10n/Strings.dart';
+
+class _MyLocalizationsDelegate extends LocalizationsDelegate<Strings> {
+  const _MyLocalizationsDelegate();
+
+  @override
+  bool isSupported(Locale locale) => ['en', 'ja'].contains(locale.languageCode);
+
+  @override
+  Future<Strings> load(Locale locale) => Strings.load(locale);
+
+  @override
+  bool shouldReload(_MyLocalizationsDelegate old) => false;
+}
 
 void main() => runApp(MyApp());
-
-class _Notifier extends ValueNotifier<String> {
-  _Notifier() : super('');
-
-  Future<void> init() async {
-    value = await rootBundle.loadString('assets/txt/sampletext.txt');
-  }
-
-  AssetImage loadAssetImage() => AssetImage('assets/img/ic_launcher.png');
-}
 
 class MyApp extends StatelessWidget {
   MyApp({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final notifier = _Notifier();
-    notifier.init();
     return MaterialApp(
-      home: ChangeNotifierProvider(
-        create: (context) => notifier,
-        child: _MyHomePage(),
-      ),
+      localizationsDelegates: [
+        const _MyLocalizationsDelegate(),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('en', ''),
+        const Locale('ja', ''),
+      ],
+      home: _MyHomePage(),
     );
   }
 }
@@ -38,10 +47,8 @@ class _MyHomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(Provider.of<_Notifier>(context).value),
-            Image(
-                image: Provider.of<_Notifier>(context, listen: false)
-                    .loadAssetImage()),
+            Text(Strings.of(context).welcome),
+            Text(Strings.of(context).seeyou),
           ],
         ),
       ),

@@ -1,0 +1,13 @@
+{
+  "@@last_modified": "2020-09-15T15:10:20.722331",
+  "welcome": "Welcome !!",
+  "@welcome": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "seeyou": "See you again.",
+  "@seeyou": {
+    "type": "text",
+    "placeholders": {}
+  }
+}
