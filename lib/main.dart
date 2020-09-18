@@ -73,7 +73,7 @@ class WidgetC_Button extends StatelessWidget {
   Widget build(BuildContext context) {
     print('$this build() called.');
     return RaisedButton(
-      onPressed: () => Provider.of<CountData>(context, listen: false).count++,
+      onPressed: () => Provider.of<CountData>(context, listen: false).increment(),
       child: Text('Update Counter'),
     );
   }
