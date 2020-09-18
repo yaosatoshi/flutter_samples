@@ -7,13 +7,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Provider<CountData>(
+      home: ListenableProvider<_Notifier>(
         create: (_) {
-          final cd = CountData();
-          cd.init();
-          return cd;
+          final notifier = _Notifier();
+          notifier.init();
+          return notifier;
         },
-        dispose: (_, cd) async => cd.dispose(),
+        dispose: (_, notifier) async => await notifier.dispose(),
         child: Scaffold(
           body: Center(
             child: Column(
@@ -31,22 +31,20 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class CountData {
-  CountData() {
-    print("CountData constructor.");
-  }
+class _Notifier extends ValueNotifier<int> {
+  _Notifier() : super(0);
 
   Future<void> init() async {
-    print("CountData init.");
+    print("_Notifier init.");
   }
 
-  int count = 0;
-
-  void increment() => count++;
-
-  Future<void> dispose() async {
-    print("CountData dispose.");
+  @override
+  void dispose() async {
+    super.dispose();
+    print("_Notifier dispose.");
   }
+
+  void increment() => value++;
 }
 
 class WidgetA_CounterText extends StatelessWidget {
@@ -54,7 +52,7 @@ class WidgetA_CounterText extends StatelessWidget {
   Widget build(BuildContext context) {
     print('$this build() called.');
     return Text(
-      '${Provider.of<CountData>(context).count}',
+      '${Provider.of<_Notifier>(context).value}',
       style: Theme.of(context).textTheme.display1,
     );
   }
@@ -73,7 +71,8 @@ class WidgetC_Button extends StatelessWidget {
   Widget build(BuildContext context) {
     print('$this build() called.');
     return RaisedButton(
-      onPressed: () => Provider.of<CountData>(context, listen: false).increment(),
+      onPressed: () =>
+          Provider.of<_Notifier>(context, listen: false).increment(),
       child: Text('Update Counter'),
     );
   }
