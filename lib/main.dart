@@ -1,71 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
+
+class Counter extends ValueNotifier<int> {
+  Counter() : super(0) {
+    addListener(() => print("count changed 2. /count:$value"));
+  }
+
+  void increment() => value++;
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final counter = CountData();
+    final counter = Counter();
+
     return MaterialApp(
-      home: ValueListenableProvider<int>(
-        create: (_) {
-          counter.init();
-          return counter;
-        },
-        child: Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                WidgetA_CounterText(),
-                WidgetB_FixedText(),
-                RaisedButton(
-                  onPressed: () => counter.increment(),
-                  child: Text('Update Counter'),
-                ),
-              ],
-            ),
+      home: Scaffold(
+        body: Center(
+          child: ValueListenableBuilder<int>(
+            valueListenable: counter,
+            builder: (_context, count, _child) {
+              print("count changed 1. /count:$count");
+              return Text('$count',
+                  style: Theme.of(context).textTheme.display1);
+            },
           ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => counter.increment(),
+          child: const Icon(Icons.add),
         ),
       ),
     );
-  }
-}
-
-class CountData extends ValueNotifier<int> {
-  CountData() : super(0);
-
-  Future<void> init() async {
-    print("CountData init.");
-  }
-
-  void increment() => value++;
-
-  @override void dispose() {
-    super.dispose();
-    print("CountData dispose.");
-  }
-}
-
-class WidgetA_CounterText extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    print('$this build() called.');
-    return Text(
-      '${Provider.of<int>(context)}',
-      style: Theme
-          .of(context)
-          .textTheme
-          .display1,
-    );
-  }
-}
-
-class WidgetB_FixedText extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    print('$this build() called.');
-    return Text('FIXED TEXT');
   }
 }
