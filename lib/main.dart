@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  runApp(MyApp());
-}
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  MyApp({Key key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: ChangeNotifierProvider(
-        create: (context) => _Notifier(),
+      home: Provider<CountData>(
+        create: (_) {
+          final cd = CountData();
+          cd.init();
+          return cd;
+        },
+        dispose: (_, cd) async => cd.dispose(),
         child: Scaffold(
           body: Center(
             child: Column(
@@ -30,12 +31,22 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class _Notifier extends ValueNotifier<int> {
-  _Notifier() : super(0);
+class CountData {
+  CountData() {
+    print("CountData constructor.");
+  }
 
-  void increment() => value++;
+  Future<void> init() async {
+    print("CountData init.");
+  }
 
-  String get _counter => value.toString();
+  int count = 0;
+
+  void increment() => count++;
+
+  Future<void> dispose() async {
+    print("CountData dispose.");
+  }
 }
 
 class WidgetA_CounterText extends StatelessWidget {
@@ -43,7 +54,7 @@ class WidgetA_CounterText extends StatelessWidget {
   Widget build(BuildContext context) {
     print('$this build() called.');
     return Text(
-      '${Provider.of<_Notifier>(context)._counter}',
+      '${Provider.of<CountData>(context).count}',
       style: Theme.of(context).textTheme.display1,
     );
   }
@@ -62,9 +73,7 @@ class WidgetC_Button extends StatelessWidget {
   Widget build(BuildContext context) {
     print('$this build() called.');
     return RaisedButton(
-      onPressed: () {
-        Provider.of<_Notifier>(context, listen: false).increment();
-      },
+      onPressed: () => Provider.of<CountData>(context, listen: false).count++,
       child: Text('Update Counter'),
     );
   }
