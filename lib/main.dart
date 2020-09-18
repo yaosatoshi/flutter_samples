@@ -31,8 +31,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class _Notifier extends ValueNotifier<int> {
-  _Notifier() : super(0);
+class _Notifier extends ChangeNotifier {
+  int value = 0;
 
   Future<void> init() async {
     print("_Notifier init.");
@@ -44,7 +44,10 @@ class _Notifier extends ValueNotifier<int> {
     print("_Notifier dispose.");
   }
 
-  void increment() => value++;
+  void increment() {
+    value++;
+    notifyListeners();
+  }
 }
 
 class WidgetA_CounterText extends StatelessWidget {
