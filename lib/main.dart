@@ -7,13 +7,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Provider<CountData>(
-        create: (_) {
-          final cd = CountData();
-          cd.init();
-          return cd;
-        },
-        dispose: (_, cd) async => cd.dispose(),
+      home: Provider<CountData>.value(
+        value : CountData(),
         child: Scaffold(
           body: Center(
             child: Column(
