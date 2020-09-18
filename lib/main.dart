@@ -6,14 +6,13 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final counter = CountData();
     return MaterialApp(
-      home: Provider<CountData>(
+      home: ValueListenableProvider<int>(
         create: (_) {
-          final cd = CountData();
-          cd.init();
-          return cd;
+          counter.init();
+          return counter;
         },
-        dispose: (_, cd) async => cd.dispose(),
         child: Scaffold(
           body: Center(
             child: Column(
@@ -21,7 +20,10 @@ class MyApp extends StatelessWidget {
               children: [
                 WidgetA_CounterText(),
                 WidgetB_FixedText(),
-                WidgetC_Button(),
+                RaisedButton(
+                  onPressed: () => counter.increment(),
+                  child: Text('Update Counter'),
+                ),
               ],
             ),
           ),
@@ -31,20 +33,17 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class CountData {
-  CountData() {
-    print("CountData constructor.");
-  }
+class CountData extends ValueNotifier<int> {
+  CountData() : super(0);
 
   Future<void> init() async {
     print("CountData init.");
   }
 
-  int count = 0;
+  void increment() => value++;
 
-  void increment() => count++;
-
-  Future<void> dispose() async {
+  @override void dispose() {
+    super.dispose();
     print("CountData dispose.");
   }
 }
@@ -54,8 +53,11 @@ class WidgetA_CounterText extends StatelessWidget {
   Widget build(BuildContext context) {
     print('$this build() called.');
     return Text(
-      '${Provider.of<CountData>(context).count}',
-      style: Theme.of(context).textTheme.display1,
+      '${Provider.of<int>(context)}',
+      style: Theme
+          .of(context)
+          .textTheme
+          .display1,
     );
   }
 }
@@ -65,16 +67,5 @@ class WidgetB_FixedText extends StatelessWidget {
   Widget build(BuildContext context) {
     print('$this build() called.');
     return Text('FIXED TEXT');
-  }
-}
-
-class WidgetC_Button extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    print('$this build() called.');
-    return RaisedButton(
-      onPressed: () => Provider.of<CountData>(context, listen: false).increment(),
-      child: Text('Update Counter'),
-    );
   }
 }
