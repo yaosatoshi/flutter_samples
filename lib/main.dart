@@ -1,80 +1,61 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'dart:async';
 
-void main() => runApp(MyApp());
+import 'package:flutter/material.dart';
+
+void main() {
+  example1_normal();
+//  example2_broadcast();
+//  example3_transform();
+
+  runApp(MyApp());
+}
+
+void example1_normal() {
+  final sctrl = StreamController<String>();
+
+  sctrl.stream.listen((event) {
+    print("stream data catched. /event:$event");
+  });
+
+  sctrl.sink.add("AAA");
+  sctrl.sink.add("BBB");
+  sctrl.sink.add("CCC");
+}
+
+void example2_broadcast() {
+  final sctrl = StreamController<String>.broadcast();
+
+  sctrl.stream.listen((event) {
+    print("stream data 1 catched. /event:$event");
+  });
+
+  sctrl.stream.listen((event) {
+    print("stream data 2 catched. /event:$event");
+  });
+
+  sctrl.sink.add("AAA");
+  sctrl.sink.add("BBB");
+  sctrl.sink.add("CCC");
+}
+
+void example3_transform() {
+  final sctrl = StreamController<String>();
+
+  sctrl.stream.transform(
+      StreamTransformer<String, String>.fromHandlers(handleData: (value, sink) {
+    sink.add(value + ':TRANSFORMED');
+  })).listen((event) {
+    print("stream data catched. /event:$event");
+  });
+
+  sctrl.sink.add("AAA");
+  sctrl.sink.add("BBB");
+  sctrl.sink.add("CCC");
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Provider<CountData>(
-        create: (_) {
-          final cd = CountData();
-          cd.init();
-          return cd;
-        },
-        dispose: (_, cd) async => cd.dispose(),
-        child: Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                WidgetA_CounterText(),
-                WidgetB_FixedText(),
-                WidgetC_Button(),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class CountData {
-  CountData() {
-    print("CountData constructor.");
-  }
-
-  Future<void> init() async {
-    print("CountData init.");
-  }
-
-  int count = 0;
-
-  void increment() => count++;
-
-  Future<void> dispose() async {
-    print("CountData dispose.");
-  }
-}
-
-class WidgetA_CounterText extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    print('$this build() called.');
-    return Text(
-      '${Provider.of<CountData>(context).count}',
-      style: Theme.of(context).textTheme.display1,
-    );
-  }
-}
-
-class WidgetB_FixedText extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    print('$this build() called.');
-    return Text('FIXED TEXT');
-  }
-}
-
-class WidgetC_Button extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    print('$this build() called.');
-    return RaisedButton(
-      onPressed: () => Provider.of<CountData>(context, listen: false).increment(),
-      child: Text('Update Counter'),
-    );
+    return MaterialApp(home: Text(""));
   }
 }
