@@ -6,7 +6,7 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final counter = CountData();
+    final counter = _Notifier();
     return MaterialApp(
       home: ValueListenableProvider<int>(
         create: (_) {
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
                 RaisedButton(
                   onPressed: () => counter.increment(),
                   child: Text('Update Counter'),
-                ), 
+                ),
               ],
             ),
           ),
@@ -33,8 +33,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class CountData extends ValueNotifier<int> {
-  CountData() : super(0);
+class _Notifier extends ValueNotifier<int> {
+  _Notifier() : super(0);
 
   Future<void> init() async {
     print("CountData init.");
@@ -42,7 +42,8 @@ class CountData extends ValueNotifier<int> {
 
   void increment() => value++;
 
-  @override void dispose() {
+  @override
+  void dispose() {
     super.dispose();
     print("CountData dispose.");
   }
@@ -54,10 +55,7 @@ class WidgetA_CounterText extends StatelessWidget {
     print('$this build() called.');
     return Text(
       '${Provider.of<int>(context)}',
-      style: Theme
-          .of(context)
-          .textTheme
-          .display1,
+      style: Theme.of(context).textTheme.display1,
     );
   }
 }
