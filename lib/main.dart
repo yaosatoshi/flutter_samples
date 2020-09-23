@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              CountText(),
+              Consumer<int>(builder: (context, value, _) => Text("$value")),
               RaisedButton(
                 onPressed: () => sctrl.sink.add(++count),
                 child: Text('Update Counter'),
@@ -33,13 +33,5 @@ class MyApp extends StatelessWidget {
         ),
       ),
     ));
-  }
-}
-
-class CountText extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    print('$this build() called.');
-    return Text("${Provider.of<int>(context)}");
   }
 }
