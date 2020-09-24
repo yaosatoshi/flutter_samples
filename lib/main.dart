@@ -11,20 +11,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: ChangeNotifierProvider<_Notifier>(
-        create: (context) => _Notifier(),
-        child: ChangeNotifierProvider<_Notifier2>(
-          create: (context) => _Notifier2(),
-          child: Scaffold(
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  WidgetA_CounterText(),
-                  WidgetB_FixedText(),
-                  WidgetC_Button(),
-                ],
-              ),
+      home: MultiProvider(
+        providers: [
+          ChangeNotifierProvider<_Notifier>(create: (context) => _Notifier()),
+          ChangeNotifierProvider<_Notifier2>(create: (context) => _Notifier2()),
+        ],
+        child: Scaffold(
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                WidgetA_CounterText(),
+                WidgetB_FixedText(),
+                WidgetC_Button(),
+              ],
             ),
           ),
         ),
@@ -42,7 +42,7 @@ class _Notifier extends ValueNotifier<int> {
 class _Notifier2 extends ValueNotifier<int> {
   _Notifier2() : super(0);
 
-  void increment() => value+=10;
+  void increment() => value += 10;
 }
 
 class WidgetA_CounterText extends StatelessWidget {
