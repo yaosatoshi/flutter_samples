@@ -11,17 +11,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: ChangeNotifierProvider(
+      home: ChangeNotifierProvider<_Notifier>(
         create: (context) => _Notifier(),
-        child: Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                WidgetA_CounterText(),
-                WidgetB_FixedText(),
-                WidgetC_Button(),
-              ],
+        child: ChangeNotifierProvider<_Notifier2>(
+          create: (context) => _Notifier2(),
+          child: Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  WidgetA_CounterText(),
+                  WidgetB_FixedText(),
+                  WidgetC_Button(),
+                ],
+              ),
             ),
           ),
         ),
@@ -34,8 +37,12 @@ class _Notifier extends ValueNotifier<int> {
   _Notifier() : super(0);
 
   void increment() => value++;
+}
 
-  String get _counter => value.toString();
+class _Notifier2 extends ValueNotifier<int> {
+  _Notifier2() : super(0);
+
+  void increment() => value+=10;
 }
 
 class WidgetA_CounterText extends StatelessWidget {
@@ -43,7 +50,7 @@ class WidgetA_CounterText extends StatelessWidget {
   Widget build(BuildContext context) {
     print('$this build() called.');
     return Text(
-      '${Provider.of<_Notifier>(context)._counter}',
+      '${Provider.of<_Notifier>(context).value} ${Provider.of<_Notifier2>(context).value}',
       style: Theme.of(context).textTheme.display1,
     );
   }
@@ -64,6 +71,7 @@ class WidgetC_Button extends StatelessWidget {
     return RaisedButton(
       onPressed: () {
         Provider.of<_Notifier>(context, listen: false).increment();
+        Provider.of<_Notifier2>(context, listen: false).increment();
       },
       child: Text('Update Counter'),
     );
