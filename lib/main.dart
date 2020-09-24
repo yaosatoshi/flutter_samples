@@ -1,79 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  MyApp({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: MultiProvider(
-        providers: [
-          ChangeNotifierProvider<_Notifier>(create: (context) => _Notifier()),
-          ChangeNotifierProvider<_Notifier2>(create: (context) => _Notifier2()),
-        ],
-        child: Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                WidgetA_CounterText(),
-                WidgetB_FixedText(),
-                WidgetC_Button(),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
+void main() => runApp(MyApp());
 
 class _Notifier extends ValueNotifier<int> {
   _Notifier() : super(0);
 
-  void increment() => value++;
+  void tapped() => value++;
 }
 
-class _Notifier2 extends ValueNotifier<int> {
-  _Notifier2() : super(0);
+class _Notifier2 extends ValueNotifier<String> {
+  _Notifier2() : super("");
 
-  void increment() => value += 10;
+  void setCount(int count) => value = 'Count is $count';
 }
 
-class WidgetA_CounterText extends StatelessWidget {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print('$this build() called.');
-    return Text(
-      '${Provider.of<_Notifier>(context).value} ${Provider.of<_Notifier2>(context).value}',
-      style: Theme.of(context).textTheme.display1,
-    );
-  }
-}
-
-class WidgetB_FixedText extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    print('$this build() called.');
-    return Text('FIXED TEXT');
-  }
-}
-
-class WidgetC_Button extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    print('$this build() called.');
-    return RaisedButton(
-      onPressed: () {
-        Provider.of<_Notifier>(context, listen: false).increment();
-        Provider.of<_Notifier2>(context, listen: false).increment();
-      },
-      child: Text('Update Counter'),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<_Notifier>(create: (context) => _Notifier()),
+        ChangeNotifierProxyProvider<_Notifier, _Notifier2>(
+          create: (context) => _Notifier2(),
+          update: (context, notifier1, notifier2) {
+            print("ProxyProvider update called.");
+            notifier2.setCount(notifier1.value);
+            return notifier2;
+          },
+        ),
+      ],
+      child: MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: Consumer<_Notifier>(
+              builder: (context, n1, _) => Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("[Notifier1]: ${n1.value}"),
+                  Consumer<_Notifier2>(
+                      builder: (context, n2, _) =>
+                          Text("[Notifier2]: ${n2.value}")),
+                  RaisedButton(
+                      onPressed: () => n1.tapped(),
+                      child: Text("Update Counter")),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
