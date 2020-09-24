@@ -1,80 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  int count = 0;
+
+  Future<String> _getFutureString() async {
+//    throw Exception("");
+    final st = DateTime.now().millisecondsSinceEpoch;
+    await Future.delayed(Duration(seconds: 5));
+    return 'Count:${++count} Delay:${DateTime.now().millisecondsSinceEpoch - st}';
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Provider<CountData>(
-        create: (_) {
-          final cd = CountData();
-          cd.init();
-          return cd;
-        },
-        dispose: (_, cd) async => cd.dispose(),
-        child: Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                WidgetA_CounterText(),
-                WidgetB_FixedText(),
-                WidgetC_Button(),
-              ],
-            ),
-          ),
+      home: Scaffold(
+        body: Center(
+          child: FutureBuilder<String>(
+              future: _getFutureString(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text("Error occured.");
+                } else {
+                  print("data:${snapshot.data}");
+                  return Text(snapshot.data);
+                }
+              },
+              initialData: "now loading..."),
         ),
       ),
-    );
-  }
-}
-
-class CountData {
-  CountData() {
-    print("CountData constructor.");
-  }
-
-  Future<void> init() async {
-    print("CountData init.");
-  }
-
-  int count = 0;
-
-  void increment() => count++;
-
-  Future<void> dispose() async {
-    print("CountData dispose.");
-  }
-}
-
-class WidgetA_CounterText extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    print('$this build() called.');
-    return Text(
-      '${Provider.of<CountData>(context).count}',
-      style: Theme.of(context).textTheme.display1,
-    );
-  }
-}
-
-class WidgetB_FixedText extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    print('$this build() called.');
-    return Text('FIXED TEXT');
-  }
-}
-
-class WidgetC_Button extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    print('$this build() called.');
-    return RaisedButton(
-      onPressed: () => Provider.of<CountData>(context, listen: false).increment(),
-      child: Text('Update Counter'),
     );
   }
 }
