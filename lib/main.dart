@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  int count = 0;
 
   Future<String> _getFutureString() async {
-//    throw Exception("");
+    // throw Exception("error occured.");
     final st = DateTime.now().millisecondsSinceEpoch;
     await Future.delayed(Duration(seconds: 5));
-    return 'Count:${++count} Delay:${DateTime.now().millisecondsSinceEpoch - st}';
+    return 'Delay:${DateTime.now().millisecondsSinceEpoch - st}';
   }
 
   @override
@@ -17,16 +17,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         body: Center(
-          child: FutureBuilder<String>(
-              future: _getFutureString(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Text("Error occured.");
-                } else {
-                  print("data:${snapshot.data}");
-                  return Text(snapshot.data);
-                }
-              },
+          child: FutureProvider<String>(
+              create: (_) => _getFutureString(),
+              catchError: (context, error) => "error occured.",
+              child: Consumer<String>(
+                builder: (context, value, _) => Text(value),
+              ),
               initialData: "now loading..."),
         ),
       ),
