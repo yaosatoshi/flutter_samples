@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 void main() {
@@ -13,10 +15,27 @@ void main() {
   }, onError: Crashlytics.instance.recordError);
 }
 
+class MyRaisedButton extends StatelessWidget {
+  MyRaisedButton(this.text, this.onPressed);
+
+  String text;
+  VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return RaisedButton(
+        child: Text(text),
+        color: Colors.orange,
+        textColor: Colors.white,
+        onPressed: onPressed);
+  }
+}
+
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    int logcount = 0;
     return MaterialApp(
       title: 'Flutter Crashlytics Sample',
       theme: ThemeData(
@@ -33,24 +52,19 @@ class MyApp extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              RaisedButton(
-                child: Text("throw Exception"),
-                color: Colors.orange,
-                textColor: Colors.white,
-                onPressed: () {
-                  print("throw exception");
-                  Crashlytics.instance.crash();
-                },
-              ),
-              RaisedButton(
-                child: Text("log"),
-                color: Colors.orange,
-                textColor: Colors.white,
-                onPressed: () {
-                  print("log");
-                  Crashlytics.instance.crash();
-                },
-              ),
+              MyRaisedButton("Log", () {
+                Crashlytics.instance.log("clicked 'Log' button. ${++logcount} times.");
+              }),
+              MyRaisedButton(
+                  "throw Exception", () => Crashlytics.instance.crash()),
+              MyRaisedButton("Record Error", () {
+                try {
+                  throw Exception(
+                      "Exception occured by 'Record Error' button.");
+                } catch (e, s) {
+                  Crashlytics.instance.recordError(e, s);
+                }
+              }),
             ],
           ),
         ),
