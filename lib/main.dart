@@ -64,8 +64,39 @@ class MyApp extends StatelessWidget {
             ),
           ),
           drawer: MyDrawer(),
+          persistentFooterButtons: <Widget>[
+            MyTextFlatButton(),
+            MyIconButton(Icons.map, 'MapIcon tapped'),
+            MyIconButton(Icons.mail, 'MailIcon tapped'),
+          ],
         ),
       ),
     );
+  }
+}
+
+class MyIconButton extends StatelessWidget {
+  MyIconButton(this.icondata, this.pressedMessage);
+
+  IconData icondata;
+  String pressedMessage;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: Icon(icondata),
+      onPressed: () =>
+          Provider.of<Notifier>(context, listen: false).setMenu(pressedMessage),
+    );
+  }
+}
+
+class MyTextFlatButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+        child: Text('FooterButton1'),
+        onPressed: () => Provider.of<Notifier>(context, listen: false)
+            .setMenu('FooterButton1 tapped'));
   }
 }
