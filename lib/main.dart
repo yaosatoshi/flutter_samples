@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'bottomNavigationBar.dart';
+import 'bottomSheet.dart';
 import 'drawer.dart';
 
 void main() => runApp(MyApp());
@@ -26,10 +27,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: ChangeNotifierProvider<Notifier>(
-        create: (context) => Notifier(),
-        child: Scaffold(
+    return ChangeNotifierProvider<Notifier>(
+      create: (context) => Notifier(),
+      child: MaterialApp(
+        home: Scaffold(
           key: drawerKey,
           appBar: AppBar(
             title: Text('Side Menu example.'),
@@ -60,7 +61,8 @@ class MyApp extends StatelessWidget {
                 RaisedButton(
                   onPressed: () => drawerKey.currentState.openDrawer(),
                   child: Text("Drawer Open"),
-                )
+                ),
+                MyBottomSheetRaisedButton(),
               ],
             ),
           ),
@@ -73,6 +75,17 @@ class MyApp extends StatelessWidget {
           bottomNavigationBar: MyBottomNavigationBar(),
         ),
       ),
+    );
+  }
+}
+
+class MyBottomSheetRaisedButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return RaisedButton(
+      onPressed: () => showModalBottomSheet<void>(
+          context: context, builder: (_) => MyBottomSheet()),
+      child: Text("BottomSheet Open"),
     );
   }
 }
