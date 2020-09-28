@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'bottomNavigationBar.dart';
 import 'drawer.dart';
 
 void main() => runApp(MyApp());
@@ -69,6 +70,7 @@ class MyApp extends StatelessWidget {
             MyIconButton(Icons.map, 'MapIcon tapped'),
             MyIconButton(Icons.mail, 'MailIcon tapped'),
           ],
+          bottomNavigationBar: MyBottomNavigationBar(),
         ),
       ),
     );
