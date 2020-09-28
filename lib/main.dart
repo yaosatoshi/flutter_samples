@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'alertDialog.dart';
 import 'bottomNavigationBar.dart';
 import 'bottomSheet.dart';
 import 'drawer.dart';
@@ -63,6 +64,7 @@ class MyApp extends StatelessWidget {
                   child: Text("Drawer Open"),
                 ),
                 MyBottomSheetRaisedButton(),
+                MyAlertDialogRaisedButton(),
               ],
             ),
           ),
@@ -75,6 +77,19 @@ class MyApp extends StatelessWidget {
           bottomNavigationBar: MyBottomNavigationBar(),
         ),
       ),
+    );
+  }
+}
+
+class MyAlertDialogRaisedButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return RaisedButton(
+      onPressed: () => showDialog<void>(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => MyAlertDialog()),
+      child: Text("Alert Dialog"),
     );
   }
 }
