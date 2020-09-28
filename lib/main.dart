@@ -16,6 +16,13 @@ class MyApp extends StatelessWidget {
 
   final GlobalKey<ScaffoldState> drawerKey = GlobalKey();
 
+  final _MenuItems = [
+    'PopupMenuButton1',
+    'PopupMenuButton2',
+    'PopupMenuButton3'
+  ];
+  String _SelectedMenuItem = 'PopupMenuButton2';
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -23,7 +30,25 @@ class MyApp extends StatelessWidget {
         create: (context) => Notifier(),
         child: Scaffold(
           key: drawerKey,
-          appBar: AppBar(title: Text('Side Menu example.')),
+          appBar: AppBar(
+            title: Text('Side Menu example.'),
+            actions: <Widget>[
+              Consumer<Notifier>(
+                builder: (contxt, notifier, _) => PopupMenuButton<String>(
+                  initialValue: _SelectedMenuItem,
+                  onSelected: (String s) {
+                    _SelectedMenuItem = s;
+                    notifier.value = "$s Selected";
+                  },
+                  itemBuilder: (BuildContext context) =>
+                      _MenuItems.map((String s) => PopupMenuItem(
+                            child: Text(s),
+                            value: s,
+                          )).toList(),
+                ),
+              )
+            ],
+          ),
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
