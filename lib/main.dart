@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application/simpleDialog.dart';
 import 'package:provider/provider.dart';
 
 import 'alertDialog.dart';
@@ -65,6 +66,7 @@ class MyApp extends StatelessWidget {
                 ),
                 MyBottomSheetRaisedButton(),
                 MyAlertDialogRaisedButton(),
+                MySimpleDialogRaisedButton(),
               ],
             ),
           ),
@@ -77,6 +79,23 @@ class MyApp extends StatelessWidget {
           bottomNavigationBar: MyBottomNavigationBar(),
         ),
       ),
+    );
+  }
+}
+
+class MySimpleDialogRaisedButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return RaisedButton(
+      onPressed: () async {
+        final result = await showDialog<String>(
+            context: context,
+            barrierDismissible: false,
+            builder: (_) => MySimpleDialog());
+        Provider.of<Notifier>(context, listen: false).value =
+            "SimpleDialog RESULT is $result.";
+      },
+      child: Text("Simple Dialog"),
     );
   }
 }
