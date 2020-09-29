@@ -12,7 +12,11 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyTopPage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => MyTopPage(),
+        '/nextPage': (context) => MyNextPage(),
+      }
     );
   }
 }
@@ -27,8 +31,7 @@ class MyTopPage extends StatelessWidget {
       body: Center(child: const Text('Main Page')),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => MyNextPage()));
+          Navigator.pushNamed(context, "/nextPage");
         },
         child: Icon(Icons.add),
       ),
