@@ -7,8 +7,6 @@ import 'myColumnPage.dart';
 import 'myContainerPage.dart';
 import 'myExpandPage.dart';
 import 'myRowPage.dart';
-import 'myStackPage.dart';
-import 'myTablePage.dart';
 
 void main() {
   debugPaintSizeEnabled = true;
@@ -30,8 +28,6 @@ class MyApp extends StatelessWidget {
           '/column': (_) => MyColumnPage(),
           '/row': (_) => MyRowPage(),
           '/expand': (_) => MyExpandPage(),
-          '/stack': (_) => MyStackPage(),
-          '/table': (_) => MyTablePage(),
         },
       );
 }
@@ -43,8 +39,6 @@ class _MyTopPage extends StatelessWidget {
     _MyRaisedButton(buttonName: 'Column', transName: '/column'),
     _MyRaisedButton(buttonName: 'Row', transName: '/row'),
     _MyRaisedButton(buttonName: 'Expand', transName: '/expand'),
-    _MyRaisedButton(buttonName: 'Stack', transName: '/stack'),
-    _MyRaisedButton(buttonName: 'Table', transName: '/table'),
   ];
 
   @override
